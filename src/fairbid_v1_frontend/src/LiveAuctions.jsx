@@ -88,9 +88,12 @@ function LiveAuctions() {
     }, []);
 
     return (
-        <>
+        <>  
+        <h1 style={{color:"lightgray", fontSize: "2.2rem" , display: " flex", justifyContent:'flex-start', marginLeft: "8rem", marginTop: "3rem", fontWeight: 100}} >Live Auctions</h1>  
+        <hr className='hr-style' />
             {list == null &&
                 <div className="section">Loading</div>
+
             }
             {list?.length == 0 &&
                 <div className="section">No active auctions so far</div>

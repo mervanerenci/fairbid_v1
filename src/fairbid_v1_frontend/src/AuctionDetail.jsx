@@ -4,6 +4,8 @@ import { fairbid_v1_backend } from "../../declarations/fairbid_v1_backend";
 import { useParams } from "react-router-dom";
 import { getImageSource } from './common';
 import { AuthClient } from '@dfinity/auth-client';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
 
 function AuctionDetail() {
     const { id } = useParams();
@@ -228,23 +230,34 @@ function AuctionDetail() {
                     {user == conversation.originator.toString()  &&
 
                     <div>
-                        <h3>Question: {conversation.question}</h3>
+                        <hr className='hr-style'/>
+                        <h3 style={{marginBottom: 0}} >Question: {conversation.question}</h3>
+                        <p className='small-text'>by {conversation.originator.toString()} </p>
                         {conversation.answer && <p>Answer: {conversation.answer}</p>}   
+                          
                     </div>
+                      
                     }
                     {user == auctionDetails.originator.toString()  &&
 
                         <div>
-                            <h3>Question: {conversation.question}</h3>
-                            {conversation.answer && <p>Answer: {conversation.answer}</p>}   
+                            <hr className='hr-style'/>
+                            <h3 style={{marginBottom: 0}}>Question: {conversation.question}</h3>
+                            <p className='small-text'>by {conversation.originator.toString()} </p>
+                            {conversation.answer && <p>Answer: {conversation.answer}</p>}
+                               
                         </div>
                     }
 
                 </div>
                 :
                 <div>
-                        <h3>Question: {conversation.question}</h3>
-                        {conversation.answer && <p>Answer: {conversation.answer}</p>}   
+                        <hr className='hr-style'/>
+                        <h3 style={{marginBottom: 0}}>Question: {conversation.question}</h3>
+                        <p className='small-text'>by {conversation.originator.toString()} </p>
+                        {conversation.answer && <p>Answer: {conversation.answer}</p>}  
+
+                          
                 </div>
 
             
@@ -334,16 +347,27 @@ function AuctionDetail() {
 
 
         return (
-            <>
+            <>  
+            <div className='auction-show'>
                 <h1 className='color-gray' >{item.title}</h1>
-                <div className="auction-overview">
-                    <div className="overview-description">{item.description}</div>
+                <p className="color-gray" style={{fontWeight:200}}>Starting Price: {auctionDetails?.starting_price.toString()} ETH</p>
+                <div className="auction-overview" style={{fontWeight:200}}>
+
+                    <div className="overview-description" style={{fontWeight:200}}>{item.description}</div>
 
                     {imageData !== "" && (
                         <div className="overview-image"><img style={{ width: "30rem" }} src={imageData} alt="Auction Image" /></div>
                     )
 
                     }
+                </div>
+                {remainingTime !== 0 &&
+                        <div style={{marginBottom: "10rem", color:"lightgray"}} >
+                            <h2>Remaining Time</h2>
+                            <p>{remainingTime} seconds</p>
+                        </div>
+                        }
+
                 </div>
             </>
         );
@@ -355,17 +379,11 @@ function AuctionDetail() {
 
             <div className="section">
                 {/* remainig time */}
-                {remainingTime !== 0 &&
-                    <div style={{marginBottom: "10rem"}} >
-                        <h2>Remaining Time</h2>
-                        <p>{remainingTime} seconds</p>
-                    </div>
-                }
+                
 
 
                 <h2>History</h2>
-                <h3>Starting Price </h3>
-                <p>{auctionDetails?.starting_price.toString()} ETH</p>
+                
                 <table className='bid-table'>
                     <thead>
                         <tr>
@@ -378,14 +396,10 @@ function AuctionDetail() {
                         {historyElements}
                     </tbody>
                 </table>
-                {conversations !== undefined &&  showQuestions()}
-                {remainingTime !== 0 && showAskForm()}
+                
 
                 
-                <h2>QR Code</h2>
-                {qrData !== "" && (
-                    <div className="overview-image"><img src={qrData} alt="Auction Image/Qr Code" /></div>
-                )}
+                
             </div>
         );
     }
@@ -395,28 +409,10 @@ function AuctionDetail() {
         return (
 
 
-            <div className="section">
+            <div className="questions">
                 {conversationElements}
                 </div>
 
-
-            // <div className="section">
-            //     <h2>Questions</h2>
-            //     <div className="qa">
-            //         <div className="question">
-            //             <p>Q: {ask[0]?.question.toString()}</p>
-            //             <p>Answer: {ask[0]?.answer.toString()}</p>
-            //         </div>
-            //         <div>
-            //             {user == auctionDetails.originator && remainingTime !== 0 && showAnswerForm()}
-            //         </div>
-                    
-                    
-
-                    
-                    
-            //     </div>
-            // </div>
         );
     }
 
@@ -427,9 +423,10 @@ function AuctionDetail() {
             return (<h2 className="error-message">Need to sign in to bid</h2>);
         }
         return (
-            <div className="section">
+            <div className="section" style={{marginTop:0, paddingTop:0}}>
+                <h3>Auction ends at: {convertUnixToDateTime(Number(auctionDetails?.end_time.toString()))}</h3>
                 <h2>New Bid</h2>
-                <h3>End time: {convertUnixToDateTime(Number(auctionDetails?.end_time.toString()))}</h3>
+                
 
                 <div className="bid-form">
                     <input type="number" value={newPrice} onChange={(e) => handleNewPriceInput(e.target.value)} />
@@ -450,10 +447,23 @@ function AuctionDetail() {
             return (<h4 className="error-message">Need to sign in to ask question</h4>);
         }
         return (
-            <div className="section">
-                <h2>Ask</h2>
+            <div className="ask-form">
+                <h2 style={{color:"lightgray"}}>Ask to Seller</h2>
                 <div className="ask-form">
-                    <input onChange={ (e) => setQuestion(e.target.value) } type="text" placeholder="Ask a question" />
+                <TextField
+                                id="filled-multiline-static"
+                                label="Ask a question"
+                                multiline
+                                rows={1}
+                                onChange={(e) => setQuestion(e.target.value)}
+                                fontFamily="Kanit"
+
+                                variant="filled"
+                                sx={{ backgroundColor: "#3B464B", color: "white" }}
+
+
+                            />
+                    {/* <input onChange={ (e) => setQuestion(e.target.value) } type="text" placeholder="Ask a question" /> */}
                     <button  onClick={askQuestion}>Ask</button>
 
                 </div>
@@ -496,26 +506,53 @@ function AuctionDetail() {
         const currentBid = getLastBid();
         return (
             <>
-                {displayItem(auctionDetails.item)}
-                {
-                    currentBid != null &&
-                    <div className="section">
-                        <h2>{remainingTime == 0 ? "Final Deal" : "Current Bid"}</h2>
-                        <p className="main-price">{currentBid.price.toString()} ETH</p>
-                        <p>by {currentBid.originator.toString()}</p>
-                        <p>{convertUnixToDateTime(Number(currentBid.time.toString()))}</p>
 
-                    </div>
+                <h1 style={{color:"lightgray", fontSize: "1.8rem" , display: " flex", justifyContent:'flex-start', marginLeft: "8rem", marginTop: "3rem", fontWeight:100}}>Auction No {Number(auctionId).toString()}</h1>
+                <hr className='hr-style'/>
+                <Grid container spacing={1}  sx={{marginTop:"4rem"}} >
+                    <Grid item xs={6} >
 
-                }
-                {showRevealSecretCode()}
-                {remainingTime !== 0 ?
-                    showBidForm()
-                    :
-                    <h2 className="error-message">Auction Closed</h2>
-                }
-                {showHistory()}
+                        {displayItem(auctionDetails.item)}
+                        
+                    </Grid>
+
+                    <Grid item xs={6} sx={{paddingLeft:"10rem", paddingRight:"10rem"}}>
+                        {
+                            currentBid != null &&
+                            <div className="section">
+                                <h2>{remainingTime == 0 ? "Final Deal" : "Current Bid"}</h2>
+                                <p className="main-price">{currentBid.price.toString()} ETH</p>
+                                <p>by {currentBid.originator.toString()}</p>
+                                <p>{convertUnixToDateTime(Number(currentBid.time.toString()))}</p>
+
+                            </div>
+
+                        }
+                        {showRevealSecretCode()}
+                        {remainingTime !== 0 ?
+                            showBidForm()
+                            :
+                            <h2 className="error-message">Auction Closed</h2>
+                        }
+                        {showHistory()}
+                        
+
+                    </Grid>
+                </Grid>
+
+                <hr className='hr-style'/>     
+                {conversations !== undefined &&  showQuestions()}
+                {remainingTime !== 0 && showAskForm()}
+
                 
+                <h2>QR Code</h2>
+                {qrData !== "" && (
+                    <div className="overview-image"><img src={qrData} alt="Auction Image/Qr Code" /></div>
+                )}
+
+
+                
+
             </>
         );
     }

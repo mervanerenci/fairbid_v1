@@ -88,7 +88,9 @@ function MyAuctions() {
     }, []);
 
     return (
-        <>
+        <>  
+            <h1 style={{color:"lightgray", fontSize: "2.2rem" , display: " flex", justifyContent:'flex-start', marginLeft: "8rem", marginTop: "3rem", fontWeight:100}} >My Auctions</h1>  
+        <hr className='hr-style'  />
             {list == null &&
                 <div className="section">Loading</div>
             }

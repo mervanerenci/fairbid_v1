@@ -94,3 +94,47 @@
 .color-gray {
     color: white;
 }
+
+.auction-show {
+    list-style-type: none;
+    padding: 50px;
+    
+    border: 0.5px solid lightgray;
+    border-radius: 8px;
+    margin: 50px;
+
+    border-color: rgb(160 255 243 / 20%);
+
+    
+}
+
+.hr-style {
+    border: none;
+    height: 1px;
+    color: #8b8b8b;
+    background-color: #ffffff26;
+}
+
+.ask-form {
+    display: inline-block;
+    
+    padding: 20px;
+    background: #2e3b3b;
+    border-radius: 8px;
+    margin: 20px;
+    // box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+.questions {
+    margin: 5rem 40rem 0 40rem;
+    text-align: left;
+    color: lightgray;
+
+}
+
+.small-text {
+    font-size: 0.7em;
+    color: lightgray;
+    font-weight: 200;
+    margin:0;
+}
