@@ -1,0 +1,53 @@
+.gallery {
+    display: flex;
+    flex-flow: wrap;
+    place-content: center;
+}
+
+.gallery-item {
+    background-color: #2E2E2E;
+    list-style-type: none;
+    padding: 50px;
+    width: 260px;
+    border: 1px  black;
+    border-radius: 8px;
+    margin: 50px;
+    cursor: pointer;
+    box-shadow: rgb(33, 66, 64) 0px 20px 30px -10px;
+}
+
+//  gallery item hover animation getting bigger
+.gallery-item:hover {
+    transform: scale(1.03);
+    transition: transform 0.2s;
+    
+}
+
+
+
+.auction-title {
+    font-size: 2.7em;
+    line-height: 1.1;
+    color: white
+}
+
+.auction-description {
+    font-size: 1.3em;
+    padding: 1em;
+    color:white;
+}
+
+.gallery-item img {
+    width: 250px;
+    display: block;
+    padding: 10px;
+}
+
+.gallery-item-link {
+    font-size: x-large;
+    font-weight: 500;
+    font-family: "Kanit", sans-serif;   
+    padding: 20px;
+    color: #FFA500;
+    // color: rgb(91, 151, 151);
+}

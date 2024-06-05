@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "src/fairbid_v1_backend"
+]
+resolver = "2"
