@@ -14,6 +14,8 @@ function NewAuction() {
     const [image, setImage] = useState(Uint8Array.of());
     const [duration, setDuration] = useState(120);
     const [startingPrice, setStartingPrice] = useState(1);
+    const [contact, setContact] = useState("");
+    const [location, setLocation] = useState("");
     const [saving, setSaving] = useState(false);
     const navigate = useNavigate();
 
@@ -24,8 +26,11 @@ function NewAuction() {
                 title,
                 description,
             };
-            await fairbid_v1_backend.new_auction(item, startingPrice, BigInt(duration), image);
-            navigate("/");
+            console.log("New Auction: ", item, startingPrice, BigInt(duration), contact, location, image);
+            console.log("Location: ", location)
+            console.log("Contact: ", contact)
+            await fairbid_v1_backend.new_auction(item, startingPrice, BigInt(duration), contact, location, image);
+            navigate("/liveAuctions");
         } catch (error) {
             console.log(error);
         } finally {
@@ -165,6 +170,38 @@ function NewAuction() {
                         </div>
                     </div>
                 </div>
+
+                <div style={{ marginBottom: "20px" }}>
+
+                    <div className="auction-form-row" style={{ fontFamily: "Kanit" }}>
+                        <div className="auction-form-label">Contact</div>
+                    </div>
+
+
+                    <div className="auction-form-row" style={{ fontFamily: "Kanit" }}>
+                        <div className="auction-form-input">
+                            <TextField id="outlined-basic" label="Contact" variant="filled" sx={{ fontFamily: "Kanit", fontWeight: 900, backgroundColor: "#3B464B" }} onChange={(e) => setContact(e.target.value)} />
+                        </div>
+                    </div>
+
+                </div>
+
+                <div style={{ marginBottom: "20px" }}>
+
+                    <div className="auction-form-row" style={{ fontFamily: "Kanit" }}>
+                        <div className="auction-form-label">Location</div>
+                        
+                    </div>
+
+
+                    <div className="auction-form-row" style={{ fontFamily: "Kanit" }}>
+                        <div className="auction-form-input">
+                            <TextField id="outlined-basic" label="Location(Global, EU, etc.)" variant="filled" sx={{ fontFamily: "Kanit", fontWeight: 900, backgroundColor: "#3B464B" }} onChange={(e) => setLocation(e.target.value)} />
+                        </div>
+                    </div>
+                    
+                </div>
+
 
 
 

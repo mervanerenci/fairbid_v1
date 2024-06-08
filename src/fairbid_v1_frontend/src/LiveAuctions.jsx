@@ -14,7 +14,20 @@ function LiveAuctions() {
     const navigationLink = (auctionId) => "/viewAuction/" + auctionId;
     const actor = fairbid_v1_backend;
 
+    const fetchAuction = async () => {
+        console.log("Fetching auctions");
+        console.log(actor);
+        console.log(fairbid_v1_backend);
+        let result = await fairbid_v1_backend.get_active_auctions();
+        let data = await getDataUrl("fairbid_auction_item");
 
+        setDataUrl(data);
+        setList(result);
+    }
+
+    useEffect(() => {
+        fetchAuction();
+    }, []);
 
     function convertToDataUrl(blob) {
         return new Promise((resolve, _) => {
@@ -26,7 +39,7 @@ function LiveAuctions() {
         });
     }
 
-    async function get_data_url(id) {
+    async function getDataUrl(id) {
         console.log("Getting data url with input: ", id);
         let input = "http://127.0.0.1:4943/viewAuction/" + id;
         let qr_result;
@@ -48,7 +61,7 @@ function LiveAuctions() {
             <>
                 <li key={id} className="gallery-item" onClick={(_) => navigate(navigationLink(id))}>
                     <div className="auction-title">{overview.item.title}</div>
-                    <div className="auction-description">{overview.item.description}</div>
+                    {/* <div className="auction-description">{overview.item.description}</div> */}
                     {!!overview.item.image?.length && <img src={getImageSource(overview.item.image)} alt="Auction image" />}
                     {dataUrl && <img src={dataUrl} alt="QR Code" />}
 
@@ -69,23 +82,6 @@ function LiveAuctions() {
         );
     });
 
-    const fetchAuction = async () => {
-        console.log("Fetching auctions");
-        console.log(actor);
-        console.log(fairbid_v1_backend);
-        let result = await fairbid_v1_backend.get_active_auctions();
-        let data = await get_data_url("fairbid_auction_item");
-
-        setDataUrl(data);
-
-
-
-        setList(result);
-    }
-
-    useEffect(() => {
-        fetchAuction();
-    }, []);
 
     return (
         <>  

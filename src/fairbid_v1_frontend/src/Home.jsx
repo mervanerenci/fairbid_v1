@@ -20,7 +20,7 @@ function Home() {
             {/* left half introduction and 2 buttons 1 fore live auction 1 fore new auction, right half is just image */}
             <Grid item xs={12} sx={{marginBottom:"3rem"}} >
                 <Typography variant="h3" sx={{textTransform:'uppercase', fontWeight:"900", fontSize:"7rem"}} >Welcome to FairBid</Typography>
-                <Typography variant="h6" sx={{textTransform:'uppercase', fontWeight:"550", fontSize:"1.2rem"}}>The best platform for selling & buying</Typography>
+                <Typography variant="h6" sx={{textTransform:'uppercase', fontWeight:"550", fontSize:"1.2rem"}}>The BEST p2p Auction Marketplace</Typography>
                 <Link to="/liveAuctions"><Button variant="contained" color="primary" sx={{background:"#008080", color:"white", textTransform:"capitalize", fontWeight:"450", marginTop:"0.3rem", boxShadow: "rgb(33, 66, 64) 0px 30px 50px -10px"}}>Discover</Button></Link>
                 
 

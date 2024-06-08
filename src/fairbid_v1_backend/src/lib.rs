@@ -64,6 +64,8 @@ pub struct AuctionDetails {
     end_time: u64,
     starting_price: Option<u64>,
     originator: Principal,
+    contact: String,
+    location: String,
 }
 
 #[derive(CandidType, Deserialize, Clone)]
@@ -75,6 +77,8 @@ pub struct Auction {
     remaining_time: u64,
     starting_price: Option<u64>,
     originator: Principal,
+    contact: String,
+    location: String,
 }
 
 #[derive(CandidType, Deserialize, Clone)]
@@ -90,9 +94,6 @@ pub struct Conversation {
 //     Dutch,
 //     SealedBid,
 // }
-
-
-
 
 //TYPES END //
 
@@ -110,9 +111,6 @@ impl BoundedStorable for Auction {
     const MAX_SIZE: u32 = MAX_VALUE_SIZE;
     const IS_FIXED_SIZE: bool = false;
 }
-
-
-
 
 thread_local! {
 
@@ -132,77 +130,10 @@ thread_local! {
     // ASK_MAP
     // BUY_CODE_MAP
     
-
 }
+
 
 // FUNCTIONS START //
-// who_am_i function to get the caller's principal
-#[ic_cdk::query]
-pub fn who_am_i() -> Principal {
-    api::caller()
-}
-
-// #[ic_cdk::update]
-// // ask question to the auctioneer
-// pub fn ask_question(auction_id: AuctionId, question: String) {
-//     ASK_MAP.with(|ask_map| {
-//         ask_map.borrow_mut().insert(auction_id, Ask { question, answer: "".to_string(), originator: api::caller(), isPrivate: true});
-//     });
-// }
-
-// #[ic_cdk::update]
-// // Answer question as auction originator publically
-// pub fn answer_question(auction_id: AuctionId, answer: String) {
-//     ASK_MAP.with(|ask_map| {
-//         let mut binding = ask_map.borrow_mut();
-//         let ask = binding.get_mut(&auction_id).unwrap();
-//         ask.answer = answer;
-//     });
-// }
-
-// #[ic_cdk::query]
-// // Answer question as auction originator privately
-// pub fn answer_question_private(auction_id: AuctionId, answer: String) {
-//     ASK_MAP.with(|ask_map| {
-//         let mut binding = ask_map.borrow_mut();
-//         let ask = binding.get_mut(&auction_id).unwrap();
-//         ask.answer = answer;
-//         ask.isPrivate = true;
-//     });
-// }
-
-// #[ic_cdk::query]
-// // Get all questions asked to the auctioneer
-// pub fn get_questions() -> Vec<(AuctionId, Ask)> {
-//     ASK_MAP.with(|ask_map| {
-//         ask_map.borrow().iter().map(|(k, v)| (*k, (*v).clone())).collect()
-//     })
-// }
-
-// #[ic_cdk::query]
-// // Get all questions asked to the AuctionId
-// pub fn get_questions_by_auction_id(auction_id: AuctionId) -> Ask {
-//     ASK_MAP.with(|ask_map| {
-//         ask_map.borrow().get(&auction_id).unwrap().clone()
-//     })
-// }
-
-
-// #[ic_cdk::update]
-// // Delete question function for auction owner
-// pub fn delete_question(auction_id: AuctionId) {
-//     // if caller is not the auction owner, return
-//     if ENGLISH_AUCTION_MAP.with(|am| {
-//         let auction_map = am.borrow();
-//         auction_map.get(&auction_id).map(|auction| auction.originator != api::caller()).unwrap_or(true)
-//     }) {
-//         return;
-//     }
-
-//     ASK_MAP.with(|ask_map| {
-//         ask_map.borrow_mut().remove(&auction_id);
-//     });
-// }
 
 // get secret random number for secure communication between highest bidder and auctioneer
 #[ic_cdk::update]
@@ -239,6 +170,11 @@ pub fn get_buy_code(auction_id: AuctionId) -> u64 {
     })
 }
 
+// who_am_i function to get the caller's principal
+#[ic_cdk::query]
+pub fn who_am_i() -> Principal {
+    api::caller()
+}
 
 
 

@@ -17,6 +17,8 @@ type Auction = record {
     remaining_time: nat64;
     starting_price: opt nat64;
     originator: principal;
+    contact: text;
+    location: text;
 };
 
 type AuctionDetails = record {
@@ -25,6 +27,8 @@ type AuctionDetails = record {
     end_time: nat64;
     starting_price: opt nat64;
     originator: principal;
+    contact: text;
+    location: text;
 };
 
 
@@ -50,7 +54,7 @@ type Conversation = record {
 
 
 service : {
-    new_auction: (item: Item, price: nat64, duration: nat64, image: vec nat8) -> ();
+    new_auction: (item: Item, price: nat64, duration: nat64, contact: text, location: text, image: vec nat8) -> ();
     make_bid: (id: AuctionId, price: nat64) -> (result: variant { Ok: null; Err: text });
     end_auction: (nat64) -> (result: variant { Ok: null; Err: text });
     get_auction: (id: nat64) -> (opt Auction) query;

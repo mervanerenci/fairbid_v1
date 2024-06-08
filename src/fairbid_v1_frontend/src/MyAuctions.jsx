@@ -14,6 +14,24 @@ function MyAuctions() {
     const navigationLink = (auctionId) => "/viewAuction/" + auctionId;
     const actor = fairbid_v1_backend;
 
+    const fetchAuction = async () => {
+        console.log("Fetching auctions");
+        // console.log(actor);
+        // console.log(fairbid_v1_backend);
+        let result = await fairbid_v1_backend.get_all_auctions_by_originator();
+        let data = await getDataUrl("fairbid_auction_item");
+
+        setDataUrl(data);
+
+
+
+        setList(result);
+    }
+
+    useEffect(() => {
+        fetchAuction();
+    }, []);
+
 
 
     function convertToDataUrl(blob) {
@@ -26,8 +44,7 @@ function MyAuctions() {
         });
     }
 
-    async function get_data_url(id) {
-        console.log("Getting data url with input: ", id);
+    async function getDataUrl(id) {
         let input = "http://127.0.0.1:4943/viewAuction/" + id;
         let qr_result;
         qr_result = await fairbid_v1_backend.get_qr_code(input);
@@ -48,7 +65,7 @@ function MyAuctions() {
             <>
                 <li key={id} className="gallery-item" onClick={(_) => navigate(navigationLink(id))}>
                     <div className="auction-title">{overview.item.title}</div>
-                    <div className="auction-description">{overview.item.description}</div>
+                    {/* <div className="auction-description">{overview.item.description}</div> */}
                     {!!overview.item.image?.length && <img src={getImageSource(overview.item.image)} alt="Auction image" />}
                     {dataUrl && <img src={dataUrl} alt="QR Code" />}
 
@@ -68,24 +85,6 @@ function MyAuctions() {
             </>
         );
     });
-
-    const fetchAuction = async () => {
-        console.log("Fetching auctions");
-        // console.log(actor);
-        // console.log(fairbid_v1_backend);
-        let result = await fairbid_v1_backend.get_all_auctions_by_originator();
-        let data = await get_data_url("fairbid_auction_item");
-
-        setDataUrl(data);
-
-
-
-        setList(result);
-    }
-
-    useEffect(() => {
-        fetchAuction();
-    }, []);
 
     return (
         <>  

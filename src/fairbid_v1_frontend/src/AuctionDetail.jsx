@@ -25,7 +25,7 @@ function AuctionDetail() {
     const [question, setQuestion] = useState("");
     const [answer, setAnswer] = useState("");
     const [user, setUser] = useState(undefined);
-    const [caller, setCaller] = useState("");
+    // const [caller, setCaller] = useState("");
     const [visible, setVisible] = useState();
 
 
@@ -42,7 +42,7 @@ function AuctionDetail() {
         setRemainingTime(remaining_time);
 
         // set user 
-        
+
         const _conversations = await fairbid_v1_backend.get_questions(auctionId);
         setConversations(_conversations);
         console.log("Conversations: ", _conversations);
@@ -50,20 +50,20 @@ function AuctionDetail() {
         const _conversationIds = await fairbid_v1_backend.get_question_ids_by_auction_id(auctionId);
         setConversationIds(_conversationIds);
         console.log("Conversation Ids: ", _conversationIds);
-        
+
 
 
         const authClient = await AuthClient.create();
         setAuthenticated(await authClient.isAuthenticated());
 
-        const _caller = await fairbid_v1_backend.who_am_i();
-        const _callerString = _caller.toString();
-        setCaller(_callerString);
+        // const _caller = await fairbid_v1_backend.who_am_i();
+        // const _callerString = _caller.toString();
+        // setCaller(_callerString);
         // console.log("Caller: ", caller.toString());
 
 
 
-        const identity =  authClient.getIdentity()
+        const identity = authClient.getIdentity()
         // console.log("Identity: ", identity.getPrincipal().toString());
         setUser(identity.getPrincipal().toString());
 
@@ -71,12 +71,12 @@ function AuctionDetail() {
 
     const fetchImage = async () => {
         const image = await fairbid_v1_backend.get_item_image(auctionId);
-        
+
 
         const blob = new Blob([image], { type: 'image/png' });
         let image_png = await convertToDataUrl(blob);
 
-        
+
         setImageData(image_png);
     }
 
@@ -107,13 +107,13 @@ function AuctionDetail() {
     }
 
     function convertUnixToDateTime(unixTime) {
-        
+
         const date = new Date(unixTime / 1000000);
 
-        
+
         const timeString = date.toLocaleString();
 
-        
+
         return timeString;
 
     }
@@ -172,10 +172,10 @@ function AuctionDetail() {
         console.log("Answering question: ", id);
         if (visible) {
             await fairbid_v1_backend.answer_question(id, answer);
-           
+
         } else {
             await fairbid_v1_backend.answer_question_private(id, answer);
-            
+
         }
 
 
@@ -194,7 +194,7 @@ function AuctionDetail() {
                 {bid.price.toString()} ETH
             </td>
             <td>
-                {convertUnixToDateTime(Number(bid.time.toString()))} 
+                {convertUnixToDateTime(Number(bid.time.toString()))}
             </td>
             <td>
                 {bid.originator.toString()}
@@ -215,79 +215,81 @@ function AuctionDetail() {
         }
 
 
-      
+
 
         return (
             <>
 
-            {
-          <div key={index}>
-            {conversation.is_private?  
+                {
+                    <div key={index}>
+                        {conversation.is_private ?
 
-                    
-                <div>
 
-                    {user == conversation.originator.toString()  &&
+                            <div>
 
-                    <div>
-                        <hr className='hr-style'/>
-                        <h3 style={{marginBottom: 0}} >Question: {conversation.question}</h3>
-                        <p className='small-text'>by {conversation.originator.toString()} </p>
-                        {conversation.answer && <p>Answer: {conversation.answer}</p>}   
-                          
+                                {user == conversation.originator.toString() &&
+
+                                    <div>
+                                        <hr className='hr-style' />
+                                        <h3 style={{ marginBottom: 0 }} >Question: {conversation.question}</h3>
+                                        <p className='small-text'>by {conversation.originator.toString()} </p>
+                                        {conversation.answer && <p>Answer: {conversation.answer}</p>}
+
+                                    </div>
+
+                                }
+                                {user == auctionDetails.originator.toString() &&
+
+                                    <div>
+                                        <hr className='hr-style' />
+                                        <h3 style={{ marginBottom: 0 }}>Question: {conversation.question}</h3>
+                                        <p className='small-text'>by {conversation.originator.toString()} </p>
+                                        {conversation.answer && <p>Answer: {conversation.answer}</p>}
+
+                                    </div>
+                                }
+
+                            </div>
+                            :
+                            <div>
+                                <hr className='hr-style' />
+                                <h3 style={{ marginBottom: 0 }}>Question: {conversation.question}</h3>
+                                <p className='small-text'>by {conversation.originator.toString()} </p>
+                                {conversation.answer && <p>Answer: {conversation.answer}</p>}
+
+
+                            </div>
+
+
+                        }
+
+
+
+
+                        {user == auctionDetails.originator && remainingTime !== 0 && conversation.answer == "" &&
+
+                            <div>
+                                <input onChange={(e) => setAnswer(e.target.value)} type="text" placeholder="Answer the question" />
+                                <input type="checkbox" onChange={(e) => setVisible(e.target.checked)} /> Public
+
+                                <button onClick={() => answerQuestion(conversationIds[index])}>Answer</button>
+
+
+                            </div>
+                        }
                     </div>
-                      
-                    }
-                    {user == auctionDetails.originator.toString()  &&
-
-                        <div>
-                            <hr className='hr-style'/>
-                            <h3 style={{marginBottom: 0}}>Question: {conversation.question}</h3>
-                            <p className='small-text'>by {conversation.originator.toString()} </p>
-                            {conversation.answer && <p>Answer: {conversation.answer}</p>}
-                               
-                        </div>
-                    }
-
-                </div>
-                :
-                <div>
-                        <hr className='hr-style'/>
-                        <h3 style={{marginBottom: 0}}>Question: {conversation.question}</h3>
-                        <p className='small-text'>by {conversation.originator.toString()} </p>
-                        {conversation.answer && <p>Answer: {conversation.answer}</p>}  
-
-                          
-                </div>
-
-            
-            }
+                }
+            </>
 
 
 
-
-            {user == auctionDetails.originator && remainingTime !== 0 && conversation.answer == "" &&
-            
-            <div>
-                <input onChange={(e) => setAnswer(e.target.value)} type="text" placeholder="Answer the question" />
-                <input type="checkbox" onChange={(e) => setVisible(e.target.checked)} /> Public
-    
-                <button onClick={() => answerQuestion(conversationIds[index])}>Answer</button>
-    
-    
-            </div>
-            }
-          </div>
-          }
-          </>
-
-
-          
         );
-      });
+    });
 
     ////////////////////////////////////////////////////////
+    //////////////////////// BID SECTION ///////////////////
 
+    // MAKE NEW OFFER //
     const makeNewOffer = async () => {
         try {
             setSaving(true);
@@ -311,6 +313,7 @@ function AuctionDetail() {
         }
     };
 
+    // get last bid
     const getLastBid = () => {
         if (auctionDetails == null) {
             return null;
@@ -328,6 +331,8 @@ function AuctionDetail() {
         setNewPrice(proposedPrice);
     }
 
+
+    // HANDLE INPUTS //
     const handleNewPriceInput = (input) => {
         try {
             const value = parseInt(input);
@@ -347,26 +352,31 @@ function AuctionDetail() {
 
 
         return (
-            <>  
-            <div className='auction-show'>
-                <h1 className='color-gray' >{item.title}</h1>
-                <p className="color-gray" style={{fontWeight:200}}>Starting Price: {auctionDetails?.starting_price.toString()} ETH</p>
-                <div className="auction-overview" style={{fontWeight:200}}>
+            <>
+                <div className='auction-show'>
+                    <h1 className='color-gray' >{item.title}</h1>
+                    <p className="color-gray" style={{ fontWeight: 200 }}>Starting Price: {auctionDetails?.starting_price.toString()} ETH</p>
+                    <div className="auction-overview" style={{ fontWeight: 200 }}>
 
-                    <div className="overview-description" style={{fontWeight:200}}>{item.description}</div>
+                        <div className="overview-description" style={{ fontWeight: 200 }}>{item.description}</div>
 
-                    {imageData !== "" && (
-                        <div className="overview-image"><img style={{ width: "30rem" }} src={imageData} alt="Auction Image" /></div>
-                    )
+                        {imageData !== "" && (
+                            <div className="overview-image"><img style={{ width: "30rem" }} src={imageData} alt="Auction Image" /></div>
+                        )
 
-                    }
-                </div>
-                {remainingTime !== 0 &&
-                        <div style={{marginBottom: "10rem", color:"lightgray"}} >
+                        }
+                    </div>
+                    {remainingTime !== 0 &&
+                        <div style={{ marginBottom: "10rem", color: "lightgray" }} >
                             <h2>Remaining Time</h2>
                             <p>{remainingTime} seconds</p>
                         </div>
-                        }
+                    }
+                    <p className="color-gray" style={{ fontWeight: 300 }}>Owner: {auctionDetails?.originator.toString()}</p>
+                    
+                    <p className="color-gray" style={{ fontWeight: 300 }}>Contact: {auctionDetails?.contact.toString()}</p>
+                    <p className="color-gray" style={{ fontWeight: 300 }}>Location: {auctionDetails?.location.toString()}</p>
+
 
                 </div>
             </>
@@ -379,11 +389,11 @@ function AuctionDetail() {
 
             <div className="section">
                 {/* remainig time */}
-                
+
 
 
                 <h2>History</h2>
-                
+
                 <table className='bid-table'>
                     <thead>
                         <tr>
@@ -396,10 +406,10 @@ function AuctionDetail() {
                         {historyElements}
                     </tbody>
                 </table>
-                
 
-                
-                
+
+
+
             </div>
         );
     }
@@ -411,7 +421,7 @@ function AuctionDetail() {
 
             <div className="questions">
                 {conversationElements}
-                </div>
+            </div>
 
         );
     }
@@ -423,10 +433,10 @@ function AuctionDetail() {
             return (<h2 className="error-message">Need to sign in to bid</h2>);
         }
         return (
-            <div className="section" style={{marginTop:0, paddingTop:0}}>
+            <div className="section" style={{ marginTop: 0, paddingTop: 0 }}>
                 <h3>Auction ends at: {convertUnixToDateTime(Number(auctionDetails?.end_time.toString()))}</h3>
                 <h2>New Bid</h2>
-                
+
 
                 <div className="bid-form">
                     <input type="number" value={newPrice} onChange={(e) => handleNewPriceInput(e.target.value)} />
@@ -448,53 +458,42 @@ function AuctionDetail() {
         }
         return (
             <div className="ask-form">
-                <h2 style={{color:"lightgray"}}>Ask to Seller</h2>
+                <h2 style={{ color: "lightgray" }}>Ask to Seller</h2>
                 <div className="ask-form">
-                <TextField
-                                id="filled-multiline-static"
-                                label="Ask a question"
-                                multiline
-                                rows={1}
-                                onChange={(e) => setQuestion(e.target.value)}
-                                fontFamily="Kanit"
+                    <TextField
+                        id="filled-multiline-static"
+                        label="Ask a question"
+                        multiline
+                        rows={1}
+                        onChange={(e) => setQuestion(e.target.value)}
+                        fontFamily="Kanit"
 
-                                variant="filled"
-                                sx={{ backgroundColor: "#3B464B", color: "white" }}
+                        variant="filled"
+                        sx={{ backgroundColor: "#3B464B", color: "white" }}
 
 
-                            />
+                    />
                     {/* <input onChange={ (e) => setQuestion(e.target.value) } type="text" placeholder="Ask a question" /> */}
-                    <button  onClick={askQuestion}>Ask</button>
+                    <button onClick={askQuestion}>Ask</button>
 
                 </div>
             </div>
         );
     }
 
-    // show answer form
-    // const showAnswerForm = () => {
-    //     return (
-    //         <div className="section">
-    //             <h2>Answer</h2>
-    //             <div className="answer-form">
-    //                 <input onChange={(e) => setAnswer(e.target.value)} type="text" placeholder="Answer the question" />
-    //                 <button onClick={answerQuestion}>Answer</button>
-    //             </div>
-    //         </div>
-    //     );
-    // }
-
     // SHOW REVEAL SECRET CODE BUTTON //
     const showRevealSecretCode = () => {
-        if(remainingTime == 0) {return (
-            <div className="section">
-                <h2>Buy Code</h2>
-                <p>{secretCode}</p>
-                <button style={{background: "white", color:"black"}} onClick={getBuyCode} >Click to Reveal</button>
-                
+        if (remainingTime == 0) {
+            return (
+                <div className="section">
+                    <h2>Buy Code</h2>
+                    <p>{secretCode}</p>
+                    <button style={{ background: "white", color: "black" }} onClick={getBuyCode} >Click to Reveal</button>
 
-            </div>
-        );}
+
+                </div>
+            );
+        }
     }
 
 
@@ -507,16 +506,16 @@ function AuctionDetail() {
         return (
             <>
 
-                <h1 style={{color:"lightgray", fontSize: "1.8rem" , display: " flex", justifyContent:'flex-start', marginLeft: "8rem", marginTop: "3rem", fontWeight:100}}>Auction No {Number(auctionId).toString()}</h1>
-                <hr className='hr-style'/>
-                <Grid container spacing={1}  sx={{marginTop:"4rem"}} >
+                <h1 style={{ color: "lightgray", fontSize: "1.8rem", display: " flex", justifyContent: 'flex-start', marginLeft: "8rem", marginTop: "3rem", fontWeight: 100 }}>Auction No {Number(auctionId).toString()}</h1>
+                <hr className='hr-style' />
+                <Grid container spacing={1} sx={{ marginTop: "4rem" }} >
                     <Grid item xs={6} >
 
                         {displayItem(auctionDetails.item)}
-                        
+
                     </Grid>
 
-                    <Grid item xs={6} sx={{paddingLeft:"10rem", paddingRight:"10rem"}}>
+                    <Grid item xs={6} sx={{ paddingLeft: "10rem", paddingRight: "10rem" }}>
                         {
                             currentBid != null &&
                             <div className="section">
@@ -535,29 +534,29 @@ function AuctionDetail() {
                             <h2 className="error-message">Auction Closed</h2>
                         }
                         {showHistory()}
-                        
+
 
                     </Grid>
                 </Grid>
 
-                <hr className='hr-style'/>     
-                {conversations !== undefined &&  showQuestions()}
+                <hr className='hr-style' />
+                {conversations !== undefined && showQuestions()}
                 {remainingTime !== 0 && showAskForm()}
 
-                
+
                 <h2>QR Code</h2>
                 {qrData !== "" && (
                     <div className="overview-image"><img src={qrData} alt="Auction Image/Qr Code" /></div>
                 )}
 
 
-                
+
 
             </>
         );
     }
 
-    
+
 
     return (
         <>

@@ -9,136 +9,10 @@ use crate::{ITEMS, ENGLISH_AUCTION_MAP, CONVERSATION_MAP, QUESTION_MAP, Conversa
 
 // FUNCTIONS //
 
-// ask for an item
-#[ic_cdk::update]
-fn ask_question(id: AuctionId, question: String) {
-    // record question to question map
-    QUESTION_MAP.with(|qm| {
-        let mut question_map = qm.borrow_mut();
-        let _id = question_map.len() as QuestionId;
-
-        let question = Conversation {
-            question: question,
-            answer: "".to_string(),
-            originator: api::caller(),
-            is_private: true,
-        };
-
-        question_map.insert(_id, question.clone());
-
-        // add questions id to Conversation (AuctionId,Vec<u64> )map(u64-vec<u64>)
-        CONVERSATION_MAP.with(|cm| {
-            let mut conversation_map = cm.borrow_mut();
-            if let Some(question_ids) = conversation_map.get_mut(&id) {
-                question_ids.push(_id);
-            } else {
-                conversation_map.insert(id, vec![_id]);
-            }
-        });
-    });
-}
-
-// answer a question
-#[ic_cdk::update]
-fn answer_question(id: u64, answer: String) {
-    QUESTION_MAP.with(|qm| {
-        let mut question_map = qm.borrow_mut();
-        if let Some(question) = question_map.get(&id).cloned() {
-            let mut question = question;
-            question.answer = answer;
-            question.is_private = false;
-            question_map.insert(id, question);
-        }
-    });
-}
-
-//answer a question privately
-#[ic_cdk::update]
-fn answer_question_private(id: u64, answer: String) {
-    QUESTION_MAP.with(|qm| {
-        let mut question_map = qm.borrow_mut();
-        if let Some(question) = question_map.get(&id).cloned() {
-            let mut question = question;
-            question.answer = answer;
-            question_map.insert(id, question);
-        }
-    });
-}
-
-
-#[ic_cdk::query]
-fn get_questions(id: u64) -> Vec<Conversation> {
-    let mut questions = Vec::new();
-    let mut question_ids = Vec::new();
-    question_ids = get_question_ids_by_auction_id(id);
-
-    questions = get_questions_by_ids(question_ids);
-
-    questions
-        
-}
-
-// get question by its id 
-#[ic_cdk::query]
-fn get_question(id: u64) -> Option<Conversation> {
-    QUESTION_MAP.with(|qm| {
-        let question_map = qm.borrow();
-        question_map.get(&id).cloned()
-    })
-}
-
-
-// get questions by auction id
-#[ic_cdk::query]
-fn get_question_ids_by_auction_id(id: u64) -> Vec<u64> {
-    let mut question_ids = Vec::new();
-
-    // Access the CONVERSATION_MAP using the provided id
-    CONVERSATION_MAP.with(|cm| {
-        let conversation_map = cm.borrow();
-
-        // If the id exists in the CONVERSATION_MAP, get the vector of question ids
-        if let Some(ids) = conversation_map.get(&id) {
-            question_ids = ids.clone();
-        }
-    });
-
-    question_ids
-}
-
-#[ic_cdk::query]
-fn get_questions_by_ids(ids: Vec<u64>) -> Vec<Conversation> {
-    let mut conversations = Vec::new();
-
-    // For each id in the vector, access the QUESTION_MAP and get the Conversation
-    QUESTION_MAP.with(|qm| {
-        let question_map = qm.borrow();
-        for id in ids {
-            if let Some(conversation) = question_map.get(&id) {
-                conversations.push(conversation.clone());
-            }
-        }
-    });
-
-    conversations
-}
-
-
-
-// delete a question
-#[ic_cdk::update]
-fn delete_question(id: u64) {
-    CONVERSATION_MAP.with(|am| {
-        let mut ask_map = am.borrow_mut();
-        ask_map.remove(&id);
-    });
-}
-
-
-
+// Create a new auction
 // Duration is in seconds
 #[ic_cdk::update]
-fn new_auction(item: Item, price: u64, duration: u64, image: Vec<u8>) {
+fn new_auction(item: Item, price: u64, duration: u64, contact: String, location: String, image: Vec<u8>) {
     let item_clone = item.clone();
     ENGLISH_AUCTION_MAP.with(|am| {
         let mut auction_map = am.borrow_mut();
@@ -152,6 +26,9 @@ fn new_auction(item: Item, price: u64, duration: u64, image: Vec<u8>) {
             remaining_time: duration,
             starting_price: Some(price),
             originator: api::caller(),
+            contact: contact,
+            location: location,
+
         };
 
         
@@ -227,7 +104,7 @@ fn make_bid(id: AuctionId, price: u64) -> Result<(), &'static str> {
                 return Err("Auction has ended");
             }
 
-            if price < auction.starting_price.unwrap() {
+            if price <= auction.starting_price.unwrap() {
                 return Err("Bid must be higher than the starting price");
             }
 
@@ -263,6 +140,8 @@ fn get_auction_details(id: AuctionId) -> Option<AuctionDetails> {
             end_time: auction.end_time,
             starting_price: auction.starting_price,
             originator: auction.originator,
+            contact: auction.contact.clone(),
+            location: auction.location.clone(),
         })
     })
 }
@@ -395,18 +274,6 @@ fn get_all_bids(id: AuctionId) -> Option<Vec<Bid>> {
 }
 
 // #[ic_cdk::query]
-// fn get_highest_bidder(id: AuctionId) -> Option<Principal> {
-//     AUCTION_MAP.with(|am| {
-//         let auction_map = am.borrow();
-        
-//         auction_map
-//             .get(&id)
-//             .and_then(|auction| auction.bid_history.last().map(|bid| bid.originator))
-//     })
-// }
-
-
-// #[ic_cdk::query]
 // fn get_highest_bid(id: AuctionId) -> Option<u64> {
 //     AUCTION_MAP.with(|am| {
 //         let auction_map = am.borrow();
@@ -416,11 +283,143 @@ fn get_all_bids(id: AuctionId) -> Option<Vec<Bid>> {
 //     })
 // }
 
+
+////  q&a functions ////
+
+// ask for an item
+#[ic_cdk::update]
+fn ask_question(id: AuctionId, question: String) {
+    // record question to question map
+    QUESTION_MAP.with(|qm| {
+        let mut question_map = qm.borrow_mut();
+        let _id = question_map.len() as QuestionId;
+
+        let question = Conversation {
+            question: question,
+            answer: "".to_string(),
+            originator: api::caller(),
+            is_private: true,
+        };
+
+        question_map.insert(_id, question.clone());
+
+        // add questions id to Conversation (AuctionId,Vec<u64> )map(u64-vec<u64>)
+        CONVERSATION_MAP.with(|cm| {
+            let mut conversation_map = cm.borrow_mut();
+            if let Some(question_ids) = conversation_map.get_mut(&id) {
+                question_ids.push(_id);
+            } else {
+                conversation_map.insert(id, vec![_id]);
+            }
+        });
+    });
+}
+
+// answer a question
+#[ic_cdk::update]
+fn answer_question(id: u64, answer: String) {
+    QUESTION_MAP.with(|qm| {
+        let mut question_map = qm.borrow_mut();
+        if let Some(question) = question_map.get(&id).cloned() {
+            let mut question = question;
+            question.answer = answer;
+            question.is_private = false;
+            question_map.insert(id, question);
+        }
+    });
+}
+
+//answer a question privately
+#[ic_cdk::update]
+fn answer_question_private(id: u64, answer: String) {
+    QUESTION_MAP.with(|qm| {
+        let mut question_map = qm.borrow_mut();
+        if let Some(question) = question_map.get(&id).cloned() {
+            let mut question = question;
+            question.answer = answer;
+            question_map.insert(id, question);
+        }
+    });
+}
+
+
+#[ic_cdk::query]
+fn get_questions(id: u64) -> Vec<Conversation> {
+    let mut questions = Vec::new();
+    let mut question_ids = Vec::new();
+    question_ids = get_question_ids_by_auction_id(id);
+
+    questions = get_questions_by_ids(question_ids);
+
+    questions
+        
+}
+
+// get question by its id 
+#[ic_cdk::query]
+fn get_question(id: u64) -> Option<Conversation> {
+    QUESTION_MAP.with(|qm| {
+        let question_map = qm.borrow();
+        question_map.get(&id).cloned()
+    })
+}
+
+
+// get questions by auction id
+#[ic_cdk::query]
+fn get_question_ids_by_auction_id(id: u64) -> Vec<u64> {
+    let mut question_ids = Vec::new();
+
+    // Access the CONVERSATION_MAP using the provided id
+    CONVERSATION_MAP.with(|cm| {
+        let conversation_map = cm.borrow();
+
+        // If the id exists in the CONVERSATION_MAP, get the vector of question ids
+        if let Some(ids) = conversation_map.get(&id) {
+            question_ids = ids.clone();
+        }
+    });
+
+    question_ids
+}
+
+#[ic_cdk::query]
+fn get_questions_by_ids(ids: Vec<u64>) -> Vec<Conversation> {
+    let mut conversations = Vec::new();
+
+    // For each id in the vector, access the QUESTION_MAP and get the Conversation
+    QUESTION_MAP.with(|qm| {
+        let question_map = qm.borrow();
+        for id in ids {
+            if let Some(conversation) = question_map.get(&id) {
+                conversations.push(conversation.clone());
+            }
+        }
+    });
+
+    conversations
+}
+
+
+
+// delete a question
+#[ic_cdk::update]
+fn delete_question(id: u64) {
+    CONVERSATION_MAP.with(|am| {
+        let mut ask_map = am.borrow_mut();
+        ask_map.remove(&id);
+    });
+}
+
+
 #[ic_cdk::update]
 fn get_qr_code(string: String ) -> Vec<u8> {
     let result: Vec<u8> = qrcode_generator::to_png_to_vec(string, QrCodeEcc::Low, 1024).unwrap();
     result
 }
+
+
+
 
 // http call to convert local currency to usd, using convert.rs http call
 // #[ic_cdk::update]
