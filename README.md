@@ -1,5 +1,5 @@
-# fairbid_v1
-
+# Fairbid v1
+You can see Fairbid UI demo below.
 
 To get started, you might want to explore the project directory structure and the default configuration file. Working with this project in your development environment will not affect any production deployment or identity tokens.
 
