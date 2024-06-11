@@ -22,15 +22,19 @@ FairBid caters to different auction preferences by offering various formats:
 
 
 # UI DEMO
-
+Final Deal:
 ![fairbid-finalDeal-demo](https://github.com/mervanerenci/fairbid_v1/assets/101268022/313dfafe-661f-4db4-87e6-c50f55ae115f)
 ------
+My Auctions:
 ![fairbid-myAuctions-demo](https://github.com/mervanerenci/fairbid_v1/assets/101268022/7d0af21f-cb80-4cff-9d98-753105a960be)
 -----
+New Auction
 ![fairbid-newAuction-demo](https://github.com/mervanerenci/fairbid_v1/assets/101268022/5c8b9ca1-6314-4cc1-958c-282e5a80b4d9)
 ------
+Live Auctions
 ![fairbid-liveAuctions-demo](https://github.com/mervanerenci/fairbid_v1/assets/101268022/aa56f5c8-5514-4e56-8737-f0e6344e25f7)
 -------
+Ongoing Auction and Ask to Seller:
 ![fairbid-auctionDetails-demo](https://github.com/mervanerenci/fairbid_v1/assets/101268022/94d3ec40-4115-4e76-bfe9-495ed2b1bbf3)
 ![fairbid-askAndQr-demo](https://github.com/mervanerenci/fairbid_v1/assets/101268022/cdbb25e4-1184-4368-b1cf-3277743f9f32)
 -------
