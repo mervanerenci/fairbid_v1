@@ -1,6 +1,12 @@
 # Fairbid
 FairBid is a decentralized p2p auction marketplace offering transparent, fee-free & cross-chain transactions and multiple auction formats, leveraging the Internet Computer for a seamless, secure, and user-friendly experience.
 
+We provide sellers with the tools and resources they need to showcase their products and reach a global audience through various auction formats and buyers with a transparent, seamless, and secure auction environment. From discovering unique items to placing bids and asking questions to sellers, buyers can navigate the auction process with ease. 
+
+FairBid utilizes Internet Computer blockchain to record every transaction securely, providing transparency and immutability.
+
+
+
 ## Key Features
 
 ### Multiple Auction Formats
@@ -19,6 +25,13 @@ FairBid caters to different auction preferences by offering various formats:
 - Whitelist Management: Sellers can restrict participation to a select group of bidders using customizable whitelists.
 - Visibility Control: Auctions can be made public or private, giving sellers control over their audience.
 - Custom Usernames: Users can create unique usernames, enhancing their identity and interaction on the platform.
+
+### Ask to Seller
+FairBid encourages transparent communication between buyers and sellers through the "Ask to Seller" feature. This feature allows buyers to directly communicate with sellers, facilitating inquiries, clarifications, or negotiations before placing bids.
+
+### Internet Identity
+FairBid integrates Internet Identity, a decentralized identity management solution, to ensure secure and seamless user authentication.
+
 
 
 # UI DEMO
