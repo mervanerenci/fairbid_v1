@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { fairbid_v1_backend } from "../../declarations/fairbid_v1_backend";
 import { Link, useNavigate } from "react-router-dom";
 import { getImageSource } from './common';
+import { AuthClient } from '@dfinity/auth-client';
+
 import Button from '@mui/material/Button';
 
 
@@ -10,6 +12,7 @@ function MyAuctions() {
     const [list, setList] = useState();
     const [dataUrl, setDataUrl] = useState();
     const [text, setText] = useState("google.com");
+    const [authenticated, setAuthenticated] = useState(false);
     const navigate = useNavigate();
     const navigationLink = (auctionId) => "/viewAuction/" + auctionId;
     const actor = fairbid_v1_backend;
@@ -30,6 +33,7 @@ function MyAuctions() {
 
     useEffect(() => {
         fetchAuction();
+        authenticate();
     }, []);
 
 
@@ -55,6 +59,14 @@ function MyAuctions() {
         console.log(dataUrl);
         return dataUrl;
     }
+
+    const authenticate = async () => {
+        const authClient = await AuthClient.create();
+        const isAuthenticated = await authClient.isAuthenticated();
+        setAuthenticated(isAuthenticated);
+    };
+
+
 
 
     const overviewList = list?.map(overview => {
@@ -85,6 +97,14 @@ function MyAuctions() {
             </>
         );
     });
+
+    if (!authenticated) {
+        return (<h4 className="error-message">Need to sign in to view your auctions.</h4>);
+        
+        
+    }
+
+
 
     return (
         <>  

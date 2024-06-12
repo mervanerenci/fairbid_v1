@@ -7,6 +7,8 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Slider from '@mui/material/Slider';
 import Button from '@mui/material/Button';
+import { AuthClient } from '@dfinity/auth-client';
+import { useEffect } from 'react';
 
 function NewAuction() {
     const [title, setTitle] = useState("My Auction");
@@ -17,6 +19,7 @@ function NewAuction() {
     const [contact, setContact] = useState("");
     const [location, setLocation] = useState("");
     const [saving, setSaving] = useState(false);
+    const [authenticated, setAuthenticated] = useState(false);
     const navigate = useNavigate();
 
     const createAuction = async () => {
@@ -37,6 +40,12 @@ function NewAuction() {
             setSaving(false);
         }
     }
+
+    const authenticate = async () => {
+        const authClient = await AuthClient.create();
+        const isAuthenticated = await authClient.isAuthenticated();
+        setAuthenticated(isAuthenticated);
+    };
 
 
 
@@ -70,7 +79,18 @@ function NewAuction() {
         return Uint8Array.from(temporary);
     }
 
+    useEffect(() => {
+        authenticate();
+    }, []);
+
+    if (!authenticated) {
+        return (<h4 className="error-message">Need to sign in to create auctions.</h4>);
+        
+    }
+
     return (
+
+        
         <>
             <h1 style={{ fontFamily: "Kanit", fontSize: " 2.5rem", fontWeight: "500", color: "#D3D3D3" }} > New Auction</h1>
 
