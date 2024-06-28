@@ -1,9 +1,11 @@
 # Fairbid
 FairBid is a decentralized p2p auction marketplace offering transparent, fee-free & cross-chain transactions and multiple auction formats, leveraging the Internet Computer for a seamless, secure, and user-friendly experience.
 
-We provide sellers with the tools and resources they need to showcase their products and reach a global audience through various auction formats and buyers with a transparent, seamless, and secure auction environment. From discovering unique items to placing bids and asking questions to sellers, buyers can navigate the auction process with ease. 
-
 FairBid utilizes Internet Computer blockchain to record every transaction securely, providing transparency and immutability.
+
+We provide sellers with the tools and resources they need to showcase their products and reach a global audience through various auction formats, and buyers with a transparent, seamless, and secure auction environment. From discovering unique items to placing bids and asking questions to sellers, buyers can navigate the auction process with ease. Also, Ethereum users can enjoy free transactions when paying for a product or receiving payments on the platform.  
+
+
 
 
 
