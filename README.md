@@ -28,7 +28,7 @@ FairBid caters to different auction preferences by offering various formats:
 - Visibility Control: Auctions can be made public or private, giving sellers control over their audience.
 - Custom Usernames: Users can create unique usernames, enhancing their identity and interaction on the platform.
 
-### Ask to Seller
+### Ask to Seller On-chain
 FairBid encourages transparent communication between buyers and sellers through the "Ask to Seller" feature. This feature allows buyers to directly communicate with sellers, facilitating inquiries, clarifications, or negotiations before placing bids.
 
 ### Internet Identity
